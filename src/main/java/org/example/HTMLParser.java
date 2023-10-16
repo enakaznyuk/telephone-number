@@ -1,6 +1,8 @@
 package org.example;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -9,33 +11,31 @@ import org.jsoup.nodes.Document;
 
 public class HTMLParser {
 
-    public static void parse(){
+    public static String parse(String url){
 
-        String HTMLSTring = "<body>";
-
-        Document html = Jsoup.parse(HTMLSTring);
+        String HTMLString = "<body>";
+        Document html = Jsoup.parse(HTMLString);
         String title = html.title();
-        System.out.println("title = " + title);
+
         Document doc;
         try {
-            doc = Jsoup.connect("https://repetitors.info/")
-                    .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36")
+            doc = Jsoup.connect(url)
+                    .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (HTML, like Gecko) Chrome/107.0.0.0 Safari/537.36")
                     .get();
             title = doc.outerHtml();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        String string = title;
-        System.out.println("string = " + string);
-        boolean bool = true;
-        System.out.println("Jsoup Can read HTML page from URL, title : " + title);
-
-        String input = title;
         Pattern pattern = Pattern.compile("(\\+)*[8]{1}( )?(\\()*\\d{3}(\\))* ?\\d{3}[- ]?\\d{2}[- ]?\\d{2}");
-        Matcher matcher = pattern.matcher(input);
+        Matcher matcher = pattern.matcher(title);
+
+        Map<String, String> map = new HashMap<>();
+
         while(matcher.find())
-            System.out.println(matcher.group());
+            map.put(matcher.group(), url);
+
+        return String.valueOf(map);
     }
 }
 
